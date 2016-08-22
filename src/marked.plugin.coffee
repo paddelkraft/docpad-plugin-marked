@@ -18,9 +18,8 @@ module.exports = (BasePlugin) ->
 						text = text.replace(cName,"");
 						cName = cName.replace(".",""); 
 						return "<div class='post-paragraph " +cName+ "'>" + text + "</div>\n";
-					#return "<div class='post-paragraph'>" + text + "</div>\n"
-          return "<p>" + text + "</p>\n"
-			
+					return "<p>" + text + "</p>\n"
+          #return "<div class='post-paragraph'>" + text + "</div>\n"
 # Extend Template Data
 # Add our tempate helpers
 		extendTemplateData: (opts) ->
