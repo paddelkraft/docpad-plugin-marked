@@ -1,27 +1,50 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
-	# Define Plugin
+# Define Plugin
 	class MarkedPlugin extends BasePlugin
 		# Plugin name
 		name: 'marked'
-
-		# Plugin configuration
+# Plugin configuration
 		config:
 			markedOptions:
 				pedantic: false
 				gfm: true
 				sanitize: false
 				highlight: null
+			markedRenderer:
+				paragraph: (text) -> 
+					cName = text.split(' ')[0];
+					if cName.charAt(0) == "."
+						text = text.replace(cName,"");
+						cName = cName.replace(".",""); 
+						return "<div class='post-paragraph " +cName+ "'>" + text + "</div>\n";
+					#return "<div class='post-paragraph'>" + text + "</div>\n"
+          return "<p>" + text + "</p>\n"
+			
+# Extend Template Data
+# Add our tempate helpers
+		extendTemplateData: (opts) ->
+# Prepare
+			{templateData} = opts
+			config = @config
+			# Requires
+			marked = require('marked')
+			marked.setOptions(config.markedOptions)
 
-		# Render some content
+			# render markdown string to html 
+			templateData.renderMarkdown = (mdString) -> 
+				return marked(mdString)
+
+
+# Render some content
 		render: (opts,next) ->
-			# Prepare
+# Prepare
 			config = @config
 			{inExtension,outExtension} = opts
 
 			# Check our extensions
 			if inExtension in ['md','markdown'] and outExtension in [null,'html']
-				# Requires
+# Requires
 				marked = require('marked')
 				marked.setOptions(config.markedOptions)
 				if config.markedRenderer
@@ -40,5 +63,5 @@ module.exports = (BasePlugin) ->
 					next(err)
 
 			else
-				# Done
+# Done
 				next()
